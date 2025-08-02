@@ -13,6 +13,7 @@ def scrape_remote_job():
     
     url = "https://remoteok.com/remote-dev-jobs"
     res= requests.get(url,headers= header)
+    time.sleep(random.uniform(1,3))
     
     if res.status_code!= 200:
         print("Failed to retrieve jobs..")

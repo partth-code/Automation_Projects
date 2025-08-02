@@ -5,7 +5,7 @@ from datetime import datetime
 
 load_dotenv()
 
-API_KEY = os.getenv('API_KEY')
+API_KEY = os.getenv('WEATHER_API_KEY')
 BASE_URL_WEATHER = 'http://api.openweathermap.org/data/2.5/weather'
 BASE_URL_FORCAST = 'https://api.openweathermap.org/data/2.5/forecast'
 
