@@ -11,6 +11,7 @@ def news_scrapper():
     url = "https://www.bbc.com/"
     
     res = requests.get(url)
+    time.sleep(random.uniform(1,3))
     
     soup = BeautifulSoup(res.text , 'html.parser')
     
