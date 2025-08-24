@@ -3,7 +3,10 @@ from email.message import EmailMessage
 from email.utils import make_msgid
 import mimetypes
 from PIL import Image
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 orignal_img = 'sample.jpg'
 compressed_img = 'compressed.jpg'
@@ -19,7 +22,7 @@ server = 'smtp.gmail.com'
 port = 587
 
 email_sender = 'parthcompiler@gmail.com'
-email_password = "hixf aapy ejcn glqd"
+email_password = os.getenv('EMAIL_PASSWORD')
 email_reciever = 'parthcompiler@gmail.com'
 
 #Create Email
