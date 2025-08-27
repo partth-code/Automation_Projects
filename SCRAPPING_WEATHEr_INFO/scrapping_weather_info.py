@@ -1,39 +1,54 @@
-import requests
 from dotenv import load_dotenv
 import os
+import requests
 
 load_dotenv()
 
 
-#Setting Up Base URL
-API_KEY = os.getenv('API_KEY')
-BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
 
 
-#Enterign the City Name
-city = input("Enter your City: ")
-
-#Preparing the Request URL
-params = {
-    'q':city,
-    'appid': API_KEY,
-    'units': 'matric' #'imperial for fahrenhiet'
-}
-
-
-response = requests.get(BASE_URL,params)
-
-
-if  response.status_code == 200:
-    data = response.json()
-    main = data['main']
-    weather = data['weather'][0]
+class WeatherApp:
     
+    def __init__(self):
+        self.BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
+        self.API_KEY = os.getenv("WEATHER_API_KEY")
+        
+        
+    def get_weather(self,city):
+        
+        try:
+            self.params = {
+                'q':city.lower(),
+                'appid': self.API_KEY,
+                'units':'metric'
+            }
+            
+            res = requests.get(self.BASE_URL , self.params)
+            res.raise_for_status()
+            
+            if (res.status_code != 200):
+                return
+            
+            data = res.json()
+            main = data['main']
+            weather = data['weather'][0]
+            
+            wthr_city = city.capitalize()
+            temprature = main['temp']
+            feels_like = main['feels_like']
+            humidity = main['humidity']
+            wthr_description = weather['description']
+            
+            return (f"City: {wthr_city}\nTemprature:{temprature} C || Feels Like: {feels_like} C\nHumidity: {humidity}%\nWeather Description: {wthr_description.upper()}")
+            
+        
+        except Exception as e:
+            print(f"Error {e} occoured while fetching the data")
+            return
+        
+        
+if __name__ == "__main__":
+    app = WeatherApp()
     
-    print(f"City: {main['city']}")
-    print(f"Temprature: {main['temp']}C")
-    print(f"Humidity: {main['humidity']} %")
-    print(f"Weather: {weather['description']}")
-
-else:
-    print("An Error Occoured While Retreaving the Weeather Data")
+    city = input("Enter the city for which you want to know the weather: ").strip().lower()
+    print(app.get_weather(city))
