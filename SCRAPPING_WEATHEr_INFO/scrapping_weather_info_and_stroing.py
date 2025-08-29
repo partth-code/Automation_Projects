@@ -3,51 +3,74 @@ from dotenv import load_dotenv
 import os
 import csv
 
-
 load_dotenv()
 
-API_KEY = os.getenv('API_KEY')
-BASE_URL = 'https://api.openweathermap.org/data/2.5/weather'
+'''
+Scrapping with api
 
-#entering the city
-city = input("Enter the city name: ")
+getting the data
 
-#Creating Pameter to give a request
-params = {
-    'q':city,
-    'appid':API_KEY,
-    'units':'imperial'
-}
-
-response = requests.get(BASE_URL,params)
+storing the data
 
 
-if(response.status_code == 200):
-    data = response.json()
-    main = data['main']
-    weather = data['weather'][0]
+'''
+class WeatherApp:
+    def  __init__(self):
+        
+        self.BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
+        self.API_KEY = os.getenv("WEATHER_API_KEY")
+        
+        with open("Weather_Data.csv", 'w', newline="", encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow(("City" , "Temprature(F)" , "Feels Like(F)" , "Humidity(%)" , "Weather Description"))
+        
+    #Getting Weather Data
+    def get_weather_data(self , city):
+        
+        self.city = city
+        
+        params = {
+            'q':self.city.lower(),
+            'appid':self.API_KEY,
+            'units':'imperial'
+        }
+        
+        res = requests.get(self.BASE_URL , params) #response
+        
+        res.raise_for_status()
+        
+        if res.status_code != 200:
+            print("An Error Occuoured , While Parsingt the Weather Data")
+            return
+        
+        data = res.json()
+        
+        main = data['main']
+        weather = data['weather'][0]
+        
+        self.temp = main['temp']
+        self.feels_like = main['feels_like']
+        self.humidity = main['humidity']
+        self.weather_description = weather['description']
+        
+        return f"City: {self.city}\nTemprature: {self.temp} || Feel Like: {self.feels_like}\nHumidity: {self.humidity}\nWeather Description: {self.weather_description}"
     
-    city_weather_info  = [main['city'],main['temp'],weather['discription']]
+        
+    def store_weather_data(self):
+        with open("Weather_Data.csv", 'a', newline="", encoding='utf-8') as file:
+            writer = csv.writer(file)
+            writer.writerow((self.city ,self.temp , self.feels_like , self.humidity , self.weather_description))
+            
+        
+        
+        
+if __name__ == "__main__":
     
-csv_path = 'd:\\creatios\\SCRAPPING_WEATHEr_INFO\\weather_info.csv'
-text_path = 'd:\\creatios\\SCRAPPING_WEATHEr_INFO\\weather_info.txt'
-
-if (not os.path.exists(text_path)):
-    with open('weather_info.txt','w') as file:
-        file.writelines(city_weather_info.join(' '))
-
-else:
-    with open('weather_info.txt','a') as file:
-        file.writelines(city_weather_info.join(' '))
-
-
-if (not os.path.exists(csv_path)):
-    with open('weather_info.csv','w') as file:
-        writer  = csv.writer(file)
-        writer.writerow[['City','Temprature','Weather_Info']]
-        writer.writerow[city_weather_info]
-
-else:
-    with open('weater_info.csv','a') as file:
-        writer = csv.writer(file)
-        writer.writerow[city_weather_info]
+    app  = WeatherApp()
+    
+    while True:
+        location =input("Enter the location for which you want the weather: ").strip().lower()
+        if location=='exit':
+            break
+        print(app.get_weather_data(location))
+        app.store_weather_data()
