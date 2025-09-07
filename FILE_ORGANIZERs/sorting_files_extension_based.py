@@ -50,7 +50,7 @@ def sort_files_by_extension(base_folder_path):
     
     
     #Storing Path  Hsitory in csv File
-    with open('Path_History.csv','w',encoding ='utf-8') as file:
+    with open(os.path.join( base_folder_path,'Path_History.csv'),'w',encoding ='utf-8') as file:
         writer =  csv.writer(file)
         
         writer.writerow(['Old_File_Path','New_File_Path'])
@@ -58,6 +58,7 @@ def sort_files_by_extension(base_folder_path):
 
 
 if __name__ == "__main__":
-    path  = r"C:\Users\parth\Downloads"
+    path  = input("Enter path of folder you wnat to organnize: ")
     sort_files_by_extension(path)
+    print("Done File Organization..")
     
